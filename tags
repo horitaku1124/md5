@@ -1,0 +1,25 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CC	makefile	/^CC = gcc$/;"	m
+CFLG	makefile	/^CFLG = -std=c99 -c -g -Wall -Wextra$/;"	m
+EXE	makefile	/^EXE = a.out$/;"	m
+LDFLG	makefile	/^LDFLG = $/;"	m
+OBJ	makefile	/^OBJ = $(SRC:.c=.o)$/;"	m
+SRC	makefile	/^SRC = main.c md5.c$/;"	m
+byte_to_word	md5.c	/^static void byte_to_word(const uint8_t bytes[4], uint32_t *pval)$/;"	f	file:
+k	md5.c	/^static const uint32_t k[64] = {$/;"	v	file:
+left_rotate	md5.c	/^static uint32_t left_rotate(const uint32_t x, const uint32_t c)$/;"	f	file:
+main	main.c	/^int main(int argc, char *argv[])$/;"	f
+md5	md5.c	/^void md5(const uint8_t *initial_msg, size_t initial_len, uint8_t *digest) {$/;"	f
+proc0	md5.c	/^static void proc0(const uint32_t b, const uint32_t c, const uint32_t d,$/;"	f	file:
+proc1	md5.c	/^static void proc1(const uint32_t b, const uint32_t c, const uint32_t d,$/;"	f	file:
+proc2	md5.c	/^static void proc2(const uint32_t b, const uint32_t c, const uint32_t d,$/;"	f	file:
+proc3	md5.c	/^static void proc3(const uint32_t b, const uint32_t c, const uint32_t d,$/;"	f	file:
+proc_func_t	md5.c	/^typedef void (*proc_func_t)(const uint32_t, const uint32_t,$/;"	t	file:
+procs	md5.c	/^static proc_func_t procs[4] = {proc0, proc1, proc2, proc3};$/;"	v	file:
+r	md5.c	/^static const uint32_t r[] = {$/;"	v	file:
+word_to_byte	md5.c	/^static void word_to_byte(const uint32_t val, uint8_t bytes[4])$/;"	f	file:
