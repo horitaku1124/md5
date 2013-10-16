@@ -61,33 +61,25 @@ static void byte_to_word(const uint8_t bytes[4], uint32_t *pval)
 		*pval |= ((uint32_t) bytes[i] << (i * 8));
 }
 
-static void proc0(const uint32_t b, const uint32_t c, const uint32_t d,
-		const uint32_t i, uint32_t *pf, uint32_t *pg)
-{
-	*pf = (b & c) | ((~b) & d);
-	*pg = i;
+#define TEMPLATE_PROC(num, ff, fg) \
+	static void proc##num(const uint32_t b, const uint32_t c, const uint32_t d, \
+			const uint32_t i, uint32_t *pf, uint32_t *pg) \
+{ \
+	*pf = ff; \
+	*pg = fg; \
 }
 
-static void proc1(const uint32_t b, const uint32_t c, const uint32_t d,
-		const uint32_t i, uint32_t *pf, uint32_t *pg)
-{
-	*pf = (d & b) | ((~d) & c);
-	*pg = (5 * i + 1) % 16;
-}
+TEMPLATE_PROC(0,
+		(b & c) | ((~b) & d), i);
 
-static void proc2(const uint32_t b, const uint32_t c, const uint32_t d,
-		const uint32_t i, uint32_t *pf, uint32_t *pg)
-{
-	*pf = b ^ c ^ d;
-	*pg = (3 * i + 5) % 16;
-}
+TEMPLATE_PROC(1,
+		(d & b) | ((~d) & c), (5 * i + 1) % 16);
 
-static void proc3(const uint32_t b, const uint32_t c, const uint32_t d,
-		const uint32_t i, uint32_t *pf, uint32_t *pg)
-{
-	*pf = c ^ (b | (~d));
-	*pg = (7 * i) % 16;
-}
+TEMPLATE_PROC(2,
+		b ^ c ^ d, (3 * i + 5) % 16);
+
+TEMPLATE_PROC(3,
+		c ^ (b | (~d)), (7 * i) % 16);
 
 typedef void (*proc_func_t)(const uint32_t, const uint32_t,
 		const uint32_t, const uint32_t, uint32_t *, uint32_t *);
@@ -131,7 +123,7 @@ void md5(const uint8_t *initial_msg, size_t initial_len, uint8_t *digest) {
 
 		for (int i = 0; i < 4; i++)
 			alpha[i] = h[i];
-		
+
 		for(int i = 0; i < 64; i++) {
 			procs[i / 16](alpha[1], alpha[2], alpha[3], i, &f, &g);
 
