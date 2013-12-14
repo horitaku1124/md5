@@ -31,3 +31,5 @@
  */
 void md5(const uint8_t[], const size_t, uint8_t[]);
 
+
+void md5_located(uint8_t *msg, size_t initial_len, size_t new_len, uint8_t *digest);

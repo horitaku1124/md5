@@ -3,25 +3,45 @@ CFLG = -std=c99 -c -g -pg -Wall -Wextra
 LDFLG = -pg
 SRC = main.c md5.c
 SRC2 = main2.c md5.c
+SRC3 = crack1.c md5.c
 OBJ = $(SRC:.c=.o)
 OBJ2= $(SRC2:.c=.o)
+OBJ3= $(SRC3:.c=.o)
 EXE = main
 EXE2 = main2
+EXE3 = crack1
+EXE4 = main3
 
-${EXE2}: ${OBJ2}
-	${CC} ${OBJ2} ${LDFLG} -o ${EXE2}
+${EXE4}: md5
+	gcc -std=c99 -c -g -pg -Wall -Wextra main3.c md5.c
+	gcc main3.o md5.o -pg -o main3
+
+
+${EXE3}: md5 obj_crack
+	gcc crack1.o md5.o -pg -o crack1
+
+${EXE2}: ${OBJ}
+	gcc -std=c99 -c -g -pg -Wall -Wextra main2.c md5.c
+	gcc main2.o md5.o -pg -o main2
 
 ${EXE}: ${OBJ}
 	${CC} ${OBJ} ${LDFLG} -o ${EXE}
 
 ${OBJ}: ${SRC}
 	${CC} ${CFLG} $?
- 
+
+
+md5:
+	${CC} ${CFLG} md5.c
+
+obj_crack:
+	${CC} ${CFLG} crack1.c
+
 run:
 	./${EXE}
  
-clear:
-	rm ${OBJ} ${EXE}
+clean:
+	rm ${OBJ} ${OBJ3} ${EXE} ${EXE2} ${EXE3}
 
 test:
 	./hash_test.sh a 0cc175b9c0f1b6a831c399e269772661
@@ -33,4 +53,18 @@ test:
 	./hash_test.sh Sy9cDeMK fcb2ca343b5b3751fb8b22ec146d4c2c
 	./hash_test.sh n3RPCF6ct/,kL!L.!, eabcbb8cde94de1081e1ccd549cad06c
 	./hash_test.sh t8Wfnv5XWn2rwaVdYKPcEqFpJ2sXC848jS4DNkGU df0436859b91bddcdef409ff71b64e21
-	echo "\n\n All Fine :) \n\n"
+
+	echo " All Fine :) "
+
+test2:
+	./hash_test2.sh a 0cc175b9c0f1b6a831c399e269772661
+	./hash_test2.sh abc 900150983cd24fb0d6963f7d28e17f72
+	./hash_test2.sh aBg0 e03c7e0d92db165c6dce85d09fade8c0
+	./hash_test2.sh "!#%0" ba4e3039000b75cdb787b18d2ea86d4b
+	./hash_test2.sh aaaaaaaaaaaaaaaa 23ca472302f49b3ea5592b146a312da0
+	./hash_test2.sh asdighaiosudhgaiosuhd 278c9f8f960bbfd0f336d312c9bcafb6
+	./hash_test2.sh Sy9cDeMK fcb2ca343b5b3751fb8b22ec146d4c2c
+	./hash_test2.sh n3RPCF6ct/,kL!L.!, eabcbb8cde94de1081e1ccd549cad06c
+	./hash_test2.sh t8Wfnv5XWn2rwaVdYKPcEqFpJ2sXC848jS4DNkGU df0436859b91bddcdef409ff71b64e21
+
+	echo " All Fine :) "
