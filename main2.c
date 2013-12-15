@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
 	size_t len = strlen(argv[1]);
 	msg = malloc((int)len * sizeof(uint8_t));
-	for(int i = 0;i < len;i++) {
+	for(size_t i = 0;i < len;i++) {
 		msg[i] = argv[1][i];
 	}
 

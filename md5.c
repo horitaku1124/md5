@@ -157,11 +157,8 @@ void md5(const uint8_t *initial_msg, size_t initial_len, uint8_t *digest) {
 void md5_located(uint8_t *msg, size_t initial_len, size_t new_len, uint8_t *digest) {
 
 	msg[initial_len] = 0x80;
-	for (size_t i = initial_len + 1; i < new_len; i++)
-		msg[i] = 0;
 
 	word_to_byte(initial_len * 8, msg + new_len);
-	word_to_byte(initial_len >> 29, msg + new_len + 4);
 
 	uint32_t w[16], alpha[4];
 	uint32_t f, g, temp;
@@ -169,7 +166,7 @@ void md5_located(uint8_t *msg, size_t initial_len, size_t new_len, uint8_t *dige
 		0x67452301, 0xefcdab89,
 		0x98badcfe, 0x10325476};
 
-	for(size_t offset = 0; offset < new_len; offset += 512 / 8) {
+	for(size_t offset = 0; offset < new_len; offset += 64) {
 		for (int i = 0; i < 16; i++)
 			byte_to_word(msg + offset + i * 4, w + i);
 
