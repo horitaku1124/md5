@@ -32,4 +32,8 @@
 void md5(const uint8_t[], const size_t, uint8_t[]);
 
 
+void word_to_byte(const uint32_t val, uint8_t bytes[4]);
+
 void md5_located(uint8_t *msg, size_t initial_len, size_t new_len, uint8_t *digest);
+
+void md5_located_55(uint8_t *msg, uint8_t *digest);

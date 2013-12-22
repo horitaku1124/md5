@@ -20,9 +20,9 @@ int main(int argc, char *argv[])
 
 
 	size_t new_len = len;
-	size_t initial_len = len;
+	size_t input_len = len;
 	
-	for (new_len = initial_len + 1; new_len % (512 / 8) != 448 / 8;
+	for (new_len = input_len + 1; new_len % (512 / 8) != 448 / 8;
 			new_len++);
 
 	//printf(" new_len = %d\n", new_len);
@@ -33,8 +33,17 @@ int main(int argc, char *argv[])
 	}
 	memcpy(msg2, msg, len);
 
+	msg2[len] = 0x80;
 
-	md5_located( msg2, len, new_len, result);
+	if(len < 56) {
+		msg2[input_len] = 0x80;
+		size_t new_len = 56;
+		word_to_byte(input_len * 8, msg2 + new_len);
+
+		md5_located_55( msg2, result);
+	} else {
+		md5_located( msg2, len, new_len, result);
+	}
 	for (int i = 0; i < 16; i++)
 		printf("%2.2x", result[i]);
 	puts("");

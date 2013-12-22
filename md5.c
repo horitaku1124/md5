@@ -15,6 +15,7 @@
  * Copyright (C) Junyu Wu, SYSU 11331315, 2013
  */
 
+#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -48,7 +49,7 @@ static uint32_t left_rotate(const uint32_t x, const uint32_t c)
 	return ((x) << (c)) | ((x) >> (32 - (c))); 
 }
 
-static void word_to_byte(const uint32_t val, uint8_t bytes[4])
+void word_to_byte(const uint32_t val, uint8_t bytes[4])
 {
 	for (int i = 0; i < 4; i++)
 		bytes[i] = (uint8_t) (val >> (i * 8));
@@ -96,20 +97,21 @@ static proc_func_t procs[4] = {proc0, proc1, proc2, proc3};
  * @pre  None
  * @post None
  */
-void md5(const uint8_t *initial_msg, size_t initial_len, uint8_t *digest) {
+void md5(const uint8_t *initial_msg, size_t input_len, uint8_t *digest)
+{
 
 	size_t new_len;
-	for (new_len = initial_len + 1; new_len % (512 / 8) != 448 / 8;
+	for (new_len = input_len + 1; new_len % (512 / 8) != 448 / 8;
 			new_len++);
 
 	uint8_t *msg = (uint8_t*) malloc(new_len + 8);
-	memcpy(msg, initial_msg, initial_len);
-	msg[initial_len] = 0x80;
-	for (size_t i = initial_len + 1; i < new_len; i++)
+	memcpy(msg, initial_msg, input_len);
+	msg[input_len] = 0x80;
+	for (size_t i = input_len + 1; i < new_len; i++)
 		msg[i] = 0;
 
-	word_to_byte(initial_len * 8, msg + new_len);
-	word_to_byte(initial_len >> 29, msg + new_len + 4);
+	word_to_byte(input_len * 8, msg + new_len);
+	word_to_byte(input_len >> 29, msg + new_len + 4);
 
 	uint32_t w[16], alpha[4];
 	uint32_t f, g, temp;
@@ -144,6 +146,50 @@ void md5(const uint8_t *initial_msg, size_t initial_len, uint8_t *digest) {
 }
 
 
+
+/**
+ * Encrypt a chunk of data using MD5 algorithm.
+ * Only when aurgmented msg size is less than 55
+ *
+ * @arg	Data to encrypt
+ * @arg Data size in byte
+ * @arg Memory block to hold result, ensure at least 16 bit length
+ *
+ * @pre  None
+ * @post None
+ */
+void md5_located_55(uint8_t *msg, uint8_t *digest) 
+{
+
+	uint32_t w[16], alpha[4];
+	uint32_t f, g, temp;
+	uint32_t h[] = {
+		0x67452301, 0xefcdab89,
+		0x98badcfe, 0x10325476};
+
+	for (int i = 0; i < 16; i++)
+		byte_to_word(msg + i * 4, w + i);
+
+	memcpy(alpha, h, (sizeof(uint32_t) * 4));
+
+	for(int i = 0; i < 64; i++) {
+		procs[i / 16](alpha[1], alpha[2], alpha[3], i, &f, &g);
+
+		temp = alpha[3];
+		alpha[3] = alpha[2];
+		alpha[2] = alpha[1];
+		alpha[1] = alpha[1] + left_rotate((alpha[0] + f + k[i] + w[g]), r[i]);
+		alpha[0] = temp;
+	}
+	for (int i = 0; i < 4; i++)
+		h[i] += alpha[i];
+
+	for (int i = 0; i < 4; i++)
+		word_to_byte(h[i], digest + 4 * i);
+}
+
+
+
 /**
  * Encrypt a chunk of data using MD5 algorithm.
  *
@@ -154,11 +200,16 @@ void md5(const uint8_t *initial_msg, size_t initial_len, uint8_t *digest) {
  * @pre  None
  * @post None
  */
-void md5_located(uint8_t *msg, size_t initial_len, size_t new_len, uint8_t *digest) {
+void md5_located(uint8_t *msg, size_t input_len, size_t new_len, uint8_t *digest)
+{
+	if(input_len < 56) {
+		md5_located_55(msg, digest);
+		return;
+	}
+	//printf("input_len = %d, new_len = %d\n", input_len, new_len);
+	msg[input_len] = 0x80;
 
-	msg[initial_len] = 0x80;
-
-	word_to_byte(initial_len * 8, msg + new_len);
+	word_to_byte(input_len * 8, msg + new_len);
 
 	uint32_t w[16], alpha[4];
 	uint32_t f, g, temp;
@@ -167,11 +218,11 @@ void md5_located(uint8_t *msg, size_t initial_len, size_t new_len, uint8_t *dige
 		0x98badcfe, 0x10325476};
 
 	for(size_t offset = 0; offset < new_len; offset += 64) {
+		//printf("offset = %d\n", offset);
 		for (int i = 0; i < 16; i++)
 			byte_to_word(msg + offset + i * 4, w + i);
 
-		for (int i = 0; i < 4; i++)
-			alpha[i] = h[i];
+		memcpy(alpha, h, (sizeof(uint32_t) * 4));
 
 		for(int i = 0; i < 64; i++) {
 			procs[i / 16](alpha[1], alpha[2], alpha[3], i, &f, &g);

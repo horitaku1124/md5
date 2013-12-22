@@ -15,13 +15,13 @@ int decrypt(uint8_t* cand, int depth)
 {
 	if(depth == 0)
 	{
+		memcpy(new_message, cand, g_candidateLen);
 		for(int i = 0;i < g_targetLen;i++) {
-			cand[0] = g_targetChar[i];
+			new_message[0] = g_targetChar[i];
 
-			memcpy(new_message, cand, g_candidateLen);
-			md5_located(new_message, g_candidateLen, new_message_len, g_result);
+			md5_located_55(new_message, g_result);
 
-			int sameArray = 1;
+			short sameArray = 1;
 			for(int j = 0;j < 16;j++) {
 				if(g_input[j] != g_result[j]) {
 					sameArray = 0;
@@ -33,7 +33,7 @@ int decrypt(uint8_t* cand, int depth)
 				printf("\n Found => ");
 				for (int k = 0; k < g_candidateLen; k++)
 				{
-					printf("%c", cand[k]);
+					printf("%c", new_message[k]);
 				}
 				printf("\n");
 				return 1;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 	char* targetChar = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	char* md5str;
 	uint8_t input[16];
-	int targetLen = 4;
+	int targetLen = 4; // Must be less than 56
 	uint8_t* candidate;
 
 	if (argc < 2) {
@@ -96,7 +96,6 @@ int main(int argc, char *argv[])
 
 	g_input = input;
 	g_targetChar = (uint8_t*)targetChar;
-	//printf("targetChar = %s\n", targetChar);
 	g_targetLen = strlen(targetChar);
 	g_result = malloc(sizeof(uint8_t) * 16);
 
@@ -112,6 +111,10 @@ int main(int argc, char *argv[])
 		}
 
 		g_candidateLen = candLen;
+
+		new_message[candLen] = 0x80;
+		size_t new_len = 56;
+		word_to_byte(candLen * 8, new_message + new_len);
 
 		decrypt(candidate, candLen - 1);
 		free(candidate);
