@@ -1,6 +1,7 @@
 CC = gcc
-CFLG = -std=c99 -c -g -pg -Wall -Wextra
-CFLG2 = -std=c99 -O3 -c -Wall -Wextra
+CFLG = -c -g -pg -Wall -Wextra
+CFLG2 = -O3 -c -Wall -Wextra
+CFLG3 = -O3 -std=c99 -c -Wall -Wextra
 LDFLG = -pg
 SRC = main.c md5.c
 SRC2 = main2.c md5.c
@@ -38,7 +39,7 @@ ${EXE2_1}: md5_2
 	${CC} ${EXE2_1}.o md5_2.o  ${LDFLG} -o ${EXE2_1}
 
 ${CRACK2_1}: md5_2
-	${CC} ${CFLG2} ${CRACK2_1}.c
+	${CC} ${CFLG3} ${CRACK2_1}.c
 	${CC} ${CRACK2_1}.o md5_2.o -o ${CRACK2_1}
 
 ${OBJ}: ${SRC}
@@ -57,7 +58,7 @@ run:
 	./${EXE}
  
 clean:
-	rm -f *.o *.out *.dump *.stackdump ${EXE} ${EXE2} ${EXE3} ${EXE4} ${CRACK2_1} ${EXE2_1} crack1
+	rm -f *.o *.out *.dump *.i.c *.stackdump ${EXE} ${EXE2} ${EXE3} ${EXE4} ${CRACK2_1} ${EXE2_1} crack1
 
 test:  ${EXE2}
 	${TEST_MAIN2} a 0cc175b9c0f1b6a831c399e269772661
@@ -99,3 +100,14 @@ test3: ${EXE2_1}
 	
 crack1_dump: ${EXE3}
 	objdump -M intel -S ${EXE3} > ${EXE3}.dump
+	
+
+m1_crack1_dump:
+	${CC} -p -pg ${CFLG2} md5_2.c
+	${CC} -p -pg ${CFLG3} ${CRACK2_1}.c
+	${CC} -p -pg ${CRACK2_1}.o md5_2.o -o ${CRACK2_1}
+	cpp md5_2.c > _md5_2.i.c
+	#cc -O3 -masm=intel -S _md5_2.i.c -o _md5_2.dump.s
+	cc -O3 -S _md5_2.i.c -o _md5_2.dump.s
+	as _md5_2.dump.s -o _md5_2.o
+	objdump -M intel -S ${CRACK2_1} > ${CRACK2_1}.dump

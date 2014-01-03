@@ -1,4 +1,6 @@
 *.exe
 *.o
 *.dump
+*.i.c
+*.dump.s
 *.out

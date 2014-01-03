@@ -163,7 +163,7 @@ void md5_block_data_order (MD5_CTX *c, const void *data_, size_t num)
 	for (;num--;)
 	{
 		HOST_c2l(data,l); X( 0)=l;		HOST_c2l(data,l); X( 1)=l;
-		/* Round 0 */
+		// Round 0 
 		R0(A,B,C,D,X( 0), 7,0xd76aa478L);	HOST_c2l(data,l); X( 2)=l;
 		R0(D,A,B,C,X( 1),12,0xe8c7b756L);	HOST_c2l(data,l); X( 3)=l;
 		R0(C,D,A,B,X( 2),17,0x242070dbL);	HOST_c2l(data,l); X( 4)=l;
@@ -180,7 +180,7 @@ void md5_block_data_order (MD5_CTX *c, const void *data_, size_t num)
 		R0(D,A,B,C,X(13),12,0xfd987193L);	HOST_c2l(data,l); X(15)=l;
 		R0(C,D,A,B,X(14),17,0xa679438eL);
 		R0(B,C,D,A,X(15),22,0x49b40821L);
-		/* Round 1 */
+		// Round 1
 		R1(A,B,C,D,X( 1), 5,0xf61e2562L);
 		R1(D,A,B,C,X( 6), 9,0xc040b340L);
 		R1(C,D,A,B,X(11),14,0x265e5a51L);
@@ -197,7 +197,7 @@ void md5_block_data_order (MD5_CTX *c, const void *data_, size_t num)
 		R1(D,A,B,C,X( 2), 9,0xfcefa3f8L);
 		R1(C,D,A,B,X( 7),14,0x676f02d9L);
 		R1(B,C,D,A,X(12),20,0x8d2a4c8aL);
-		/* Round 2 */
+		// Round 2
 		R2(A,B,C,D,X( 5), 4,0xfffa3942L);
 		R2(D,A,B,C,X( 8),11,0x8771f681L);
 		R2(C,D,A,B,X(11),16,0x6d9d6122L);
@@ -214,7 +214,7 @@ void md5_block_data_order (MD5_CTX *c, const void *data_, size_t num)
 		R2(D,A,B,C,X(12),11,0xe6db99e5L);
 		R2(C,D,A,B,X(15),16,0x1fa27cf8L);
 		R2(B,C,D,A,X( 2),23,0xc4ac5665L);
-		/* Round 3 */
+		// Round 3
 		R3(A,B,C,D,X( 0), 6,0xf4292244L);
 		R3(D,A,B,C,X( 7),10,0x432aff97L);
 		R3(C,D,A,B,X(14),15,0xab9423a7L);
